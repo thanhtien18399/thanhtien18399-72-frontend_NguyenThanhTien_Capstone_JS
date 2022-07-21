@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/style.css">
+        <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Navbar</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Features</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled">Disabled</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <header class="display-4 my-4">
+            Thực hành javascript - axios
+        </header>
+        <!-- Phan tab menu -->
+        <button class="btn btn-danger mb-3" type="button"><a  href="#">Home</a></button>
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" href="#DanhSachSP" role="tab" data-toggle="tab">Danh sách sản phẩm</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#DanhSachNguoiDung" role="tab" data-toggle="tab">Danh sách người dùng</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#ThongKe" role="tab" data-toggle="tab">Thống kê</a>
+            </li>
+        </ul>
+        <br>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!--Danh sách người dùng -->
+            <div role="tabpanel" class="tab-pane   in active" id="DanhSachSP">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <!-- BEGIN BUTTOM THÊM MỚI -->
+                        <button id="btnThemSP" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                            <i class="fa fa-plus mr-1"></i>
+                            Thêm Mới
+                        </button>
+                        <!-- END BUTTON THÊM MỚI -->
+                    </div>
+                    <div class="col-md-4">
+                        <!-- BEGIN TÌM KIẾM -->
+                        <form class="d-flex">
+                            <input class="form-control me-2"
+                            id="txtSearch" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success" onclick="searchStudents()" type="button">Search</button>
+                          </form>
+                        <!-- END TÌM KIẾM -->
+                    </div>
+                </div>
+                <div class="clear-fix"></div>
+                <div class="tblSanPham" id="tblSanPham">
+                    <!-- BEGIN TABLE NGƯỜI DÙNG -->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="text-center">
+                                <th style="width:20px ;">STT</th>
+                                <th style="width:200px ;">Tên Sản Phẩm</th>
+                                <th style="width:50px ;">Giá</th>
+                                <th style="width:150px ;">Hình Ảnh</th>
+                                <th >Mô Tả</th>
+                                <th>loại SP</th>
+                                <th>SL</th>
+                                <th style="width:100px ;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblDanhSachSP" class="text-center"></tbody>
+                    </table>
+                    <!-- END TABLE NGƯỜI DÙNG -->
+                </div>
+                <br>
+            </div>
+            <!-- Kết thúc danh sách người dùng -->
+            <!-- Danh sách khóa học -->
+            <div role="tabpanel" class="tab-pane fade" id="DanhSachNguoiDung">
+                <span>Đang cập nhật...</span>
+            </div>
+            <!-- Kết thúc danh sách khóa học -->
+            <!-- Thống kê -->
+            <div role="tabpanel" class="tab-pane fade" id="ThongKe">
+                <span>Đang cập nhật...</span>
+            </div>
+            <!-- Kết thúc thống kê -->
+        </div>
+
+        <!--KetThuc Tabmenu-->
+
+        <!-- The Modal -->
+        <div class="modal fade" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Modal Heading</h4>
+                        <button id="btnCloseModal" type="button" class="close btn btn-danger" data-dismiss="modal">
+                            x
+                        </button>   
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="text" class="d-none" id="id">
+                        <div class="form-group ">
+                            <label>Tên Sản Phẩm :</label>
+                            <input id="name" class="form-control" placeholder="Nhập vào tên sản phẩm">
+                            <span id="spanName"></span>
+                        </div>
+                        <div class="row">                            
+                            <div class="form-group col-4">
+                                <label >Loại Sản Phẩm:</label>
+                                <select class="form-select" id="type" >
+                                    <option id="0" value="iphone" >Iphone</option>
+                                    <option id="1" value="samsung" >Samsung</option>
+                                    <option id="2" value="xiaomi" >Xiaomi</option>
+                                </select>
+                            </div>
+                          
+                            <div class="form-group col-4">
+                                <label>Giá:</label>
+                                <input id="price" class="form-control" placeholder="Nhập giá">
+                                <span id="spanPrice"></span>
+                            </div>
+                            <div class="form-group col-4">
+                                <label>Số Lượng</label>
+                                <input id="quantity" class="form-control" placeholder="Nhập số Lượng">
+                                <span id="spanQuantity"></span>
+                            </div>
+                        </div>
+                          
+                        
+                        <div class="form-group">
+                            <label>Hình Ảnh</label>
+                            <input id="img" class="form-control" placeholder="Nhập vào hình sản phẩm">
+                            <span id="spanImg"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Mô tả</label>
+                            <input type="text" class="form-control" id="screen" placeholder="Màn hình sản phẩm">
+                            <input type="text" class="form-control" id="backCamera" placeholder="Camera sau">
+                            <input type="text" class="form-control" id="frontCamera" placeholder="Camera Trước">
+                            <input type="text" class="form-control" id="desc" placeholder="Mô tả Sản phẩm">
+                            
+                        </div>
+                        
+                        <div class="d-flex justify-content-center">
+                            <span id="spandesc" ></span>
+                        </div>
+
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button id="btnSaveInfo" onclick="createProduct()" class="btn btn-success">Lưu Thông
+                            Tin</button>
+                        <button id="btnUpdate" onclick="updateProduct()" style="display:none ;"
+                            class="btn btn-success">Lưu thay đổi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"
+        integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="./models/product.js"></script>
+    <script src="./controllers/index.js"></script>
+</body>
+
+</html>

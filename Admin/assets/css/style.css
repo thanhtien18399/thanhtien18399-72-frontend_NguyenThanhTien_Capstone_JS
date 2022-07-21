@@ -1,0 +1,23 @@
+a{
+    text-decoration: none;
+    color: black;
+}
+img{
+    width: 150px;
+}
+.btnAction{
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: 1fr 1fr;
+}
+span{
+    color: red;
+    font-weight: 300;
+    font-style:italic ;
+}
+.form-group{
+    margin-bottom: 30px;
+}
+.form-group .form-control{
+    margin-bottom: 10px;
+}
