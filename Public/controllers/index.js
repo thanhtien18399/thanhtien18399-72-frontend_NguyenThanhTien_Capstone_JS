@@ -51,7 +51,7 @@ function renderProducts(data) {
                 <p class="product-price " >$ ${data[i].price}</p>
                 <span class="btn-add">
                     <div >
-                        <button onclick="addCart(${data[i].id},${i})" class="add-btn btn btn-dark">Add
+                        <button onclick="addCart(${data[i].id})" class="add-btn btn btn-dark">Add
                             <i class="fa-solid fa-angles-right"></i></button>
                     </div>
                 </span>
@@ -64,53 +64,7 @@ function renderProducts(data) {
     document.getElementById("banner").innerHTML = contentHTML;
 
 }
-function listChanged(type){
-    if(type.value===""){
-        getListProducts();
-        renderProducts(productList);
-    }
-    var contentHTML = "";
-    var count=-1;
-    for (var i = 0; i < productList.length; i++) {
-        if(productList[i].type===type.value){
-            var productImg = productList[i].img.includes("https")
-                ? productList[i].img
-                : `./assets/img/${productList[i].img}`
-            contentHTML += `
-        <div class="col-lg-3 col-md-6 mt-3">
-        <div class="grids5-info">
-            <div class="img">
-                <img  src="${productImg} "alt="" class="product-img img-fluid service-image">
-            </div>
-            <div class="blog-info">
-                <span  class="title product-name">
-                    ${productList[i].name}</span>
-                <p class="text-para">
-                Camera Sau: ${productList[i].backCamera}
-                <br>
-                Camera Trước: ${productList[i].frontCamera}
-                <br>
-                Màn Hình: ${productList[i].screen}
-                </p>
-            </div>
-            <div class="purchase">
-                <p class="product-price ">$ ${productList[i].price}</p>
-                <span class="btn-add">
-                    <div >
-                        <button onclick="addCart(${productList[i].id},${count+=1})" class="add-btn btn btn-dark">Add
-                            <i class="fa-solid fa-angles-right"></i></button>
-                    </div>
-                </span>
-            </div>
-        </div>
-    </div>
-        `
-        }
-    }
 
-    document.getElementById("banner").innerHTML = contentHTML;
-    getAddBtn();
-}
 var cartItem = [];
 function finById(data, id) {
     for (var i = 0; i < data.length; i++) {
@@ -146,7 +100,7 @@ function checkCartItem(id) {
     }
     return true;
 }
-function addCart(id,index) {
+function addCart(id) {
     //cách 1:
     // var val = checkCartItem(id);
     // var indexCart = cartItem.length;
@@ -157,14 +111,14 @@ function addCart(id,index) {
     // }
     var val = checkCartItem(id);
     if (val) {
-        var indexprod = finById(productList, id);
+        var index = finById(productList, id);
         var cartName = document.getElementsByClassName("product-name")[index].innerText;
         var cartImg = document.getElementsByClassName("product-img")[index].src;
         var cartPrice = +document.getElementsByClassName("product-price")[index].innerText.replace("$ ", "");
         var cartQuantity = 1;
         var cart = new Cart(id, cartName, cartImg, cartPrice, cartQuantity);
         cartItem.push(cart);
-        var e = contentHTMLBtn[indexprod].innerHTML =
+        var e = contentHTMLBtn[index].innerHTML =
             showAmount(cartQuantity, id, cartQuantity);
         saveLocalstorage();
         renderCart(cartItem);
@@ -194,11 +148,16 @@ function buy(e) {
     if (e === 1) {
         var t = document.getElementsByClassName("side-nav")[0].style.display = "none";
         var o = document.getElementsByClassName("order-now")[0].style.display = "block";
+        document.getElementById
+        sideNav(0);
+        renderbuy(cartItem);
         return;
     }
-    var o = document.getElementsByClassName("order-now")[0].style.display = "none";
+     o = document.getElementsByClassName("order-now")[0].style.display = "none";
+     document.getElementsByClassName("side-nav")[0].style.display = "block";
     sideNav(1);
-    renderCart(cartItem);
+    renderbuy(cartItem);
+
 
 
 }
@@ -215,9 +174,16 @@ function order() {
       <p>you can pay <span>$ ${total}</span> by card or any online transaction method after the products have been dilivered to you</p>
     </div>
     <div>
-    <button onclick="clearCart()" class="btn-ok">okay</button>
+    <button onclick="reload()" class="btn-ok">okay</button>
     </div>
   </div>`;
+
+}
+function reload(){
+    alert("đơn hàng của bạn đã được duyệt")
+    clearCart();
+    location.reload();
+
 }
 function clearCart() {
     cartItem.splice(0, cartItem.length);
@@ -227,7 +193,6 @@ function clearCart() {
             = showAmount(-1, productList[i].id, "");
     }
     sideNav(0);
-    var o = document.getElementsByClassName("invoice")[0].style.display = "none";
     console.log(cartItem);
     saveLocalstorage();
     renderProducts(productList)
@@ -251,7 +216,7 @@ function sideNav(e) {
 var total = 0;
 function renderCart(data) {
     var contentHTML = "";
-    var contentHTMLlistBuy = "";
+    // var contentHTMLlistBuy = "";
     total = 0;
     var amount = 0;
     for (var i = 0; i < data.length; i++) {
@@ -275,12 +240,7 @@ function renderCart(data) {
                 <button onclick="removeItem(${data[i].id})"><i class="fas fa-trash"></i></button>
             </div>  
         `
-        contentHTMLlistBuy += `<div class="shipping-items">
-        <div class="items-name"><span>${data[i].name}</span></div>
-        <div class="items-img"><img src="${data[i].img}" alt=""></div>
-        <div class="items-amount"><span>${data[i].quantity}</span></div>
-        <div class="items-price"><span>${(data[i].price * data[i].quantity)} </span></div>
-        </div>`
+       
     }
     document.getElementById("baske").innerHTML = `<div class="nav">
     <button onclick="sideNav(1)"><i class="fas fa-shopping-cart"
@@ -297,11 +257,28 @@ function renderCart(data) {
     </div>
 `
     document.getElementById("cart-items").innerHTML = contentHTML;
+    
+}
+function renderbuy(data){
+    var contentHTMLlistBuy = "";
+    total = 0;
+    var amount = 0;
+    for (var i = 0; i < data.length; i++) {
+        amount += data[i].quantity;
+        contentHTMLlistBuy += `<div class="shipping-items">
+        <div class="items-name"><span>${data[i].name}</span></div>
+        <div class="items-img"><img src="${data[i].img}" alt=""></div>
+        <div class="items-amount"><span>${data[i].quantity}</span></div>
+        <div class="items-price"><span>${(data[i].price * data[i].quantity)} </span></div>
+        </div>`
+    }
+
     document.getElementById("listBuyProduct").innerHTML = contentHTMLlistBuy;
     document.getElementsByClassName("payment")[0].innerHTML = `<em>payment</em>
     <div>
         <p>total amount to be paid:</p><span class="pay">$ ${total}</span>
     </div>`;
+    console.log(contentHTMLlistBuy);
 }
 function showAmount(qty, id, amount) {
     if (qty >= 1) {
