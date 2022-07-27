@@ -1,7 +1,7 @@
 var productList = [];
 var contentHTMLBtn = document.getElementsByClassName("btn-add");
 
-function getListProducts() {
+function getListProducts(a="") {
     //pending
     // getEle("loading").style.display = "block";
     // // Promise:
@@ -10,12 +10,21 @@ function getListProducts() {
     //             -Reject (thất bại)
 
     axios({
-        url: "https://62c2af23ff594c6567624e08.mockapi.io/api/products",
+        url: "https://62c2af23ff594c6567624e08.mockapi.io/api/products/",
         method: "GET",
     })
         .then(function (result) {
             // getEle("loading").style.display = "none";
-            productList = result.data
+            console.log(a);
+            if(a===""){
+                productList = result.data
+            }
+            for (const item of result.data) {
+                if(item.type===a){
+                    productList.push(item);
+                }
+            }
+            console.log(productList);
             renderProducts(productList);
         })
         .catch(function (error) {
@@ -26,7 +35,9 @@ getListProducts();
 
 function renderProducts(data) {
     var contentHTML = "";
+
     for (var i = 0; i < data.length; i++) {
+        // if (type === data[i].type||type===undefined) {
             var productImg = data[i].img.includes("https")
                 ? data[i].img
                 : `./assets/img/${data[i].img}`
@@ -59,12 +70,17 @@ function renderProducts(data) {
         </div>
     </div>
         `
+        // }
+        
     }
-
+    setTimeout(getAddBtn, 0);
     document.getElementById("banner").innerHTML = contentHTML;
 
 }
-
+function ListChanged(a) {
+    productList.splice(0, productList.length);
+    getListProducts(a.value);
+}
 var cartItem = [];
 function finById(data, id) {
     for (var i = 0; i < data.length; i++) {
@@ -74,43 +90,9 @@ function finById(data, id) {
     }
     return -1;
 }
-function checkCartItem(id) {
-    //cách 1:
-    // var index = finById(id);
-    // if (cartItem.length === 0) {
-    //     cartItem.push(productList[index]);
-    //     cartItem[0].quantity = 1;
-    //     return true;
-    // }
-    var index = finById(productList, id)
-    for (var i = 0; i < cartItem.length; i++) {
-        if (+cartItem[i].id === id) {
-            if (cartItem[i].quantity >= 10) {
-                alert("Không mua vược quá sl 10");
-                return;
-            } else {
-                cartItem[i].quantity += 1;
-                contentHTMLBtn[index].innerHTML
-                    = showAmount(cartItem[i].quantity, id, cartItem[i].quantity);
-                saveLocalstorage();
-                renderCart(cartItem);
-                return false;
-            }
-        }
-    }
-    return true;
-}
+
 function addCart(id) {
-    //cách 1:
-    // var val = checkCartItem(id);
-    // var indexCart = cartItem.length;
-    // var index = finById(id);
-    // if (!val) {
-    //     cartItem.push(productList[index]);
-    //     cartItem[indexCart].quantity = 1;
-    // }
-    var val = checkCartItem(id);
-    if (val) {
+   
         var index = finById(productList, id);
         var cartName = document.getElementsByClassName("product-name")[index].innerText;
         var cartImg = document.getElementsByClassName("product-img")[index].src;
@@ -122,7 +104,7 @@ function addCart(id) {
             showAmount(cartQuantity, id, cartQuantity);
         saveLocalstorage();
         renderCart(cartItem);
-    }
+
 }
 function qtyChange(id, status) {
     var index = finById(productList, id)
@@ -130,19 +112,29 @@ function qtyChange(id, status) {
         if (cartItem[i].id === id) {
             if (status === "sub") {
                 cartItem[i].quantity -= 1;
-                if (cartItem[i].quantity < 1) {
-                    removeItem(cartItem[i].id);
+                if(index>=0){
                     contentHTMLBtn[index].innerHTML = showAmount(cartItem[i].quantity, id, cartItem[i].quantity);
-                    return;
+                }
+                if (cartItem[i].quantity < 1) {
+                    cartItem.splice(i,1);
                 }
             } else if (status === "add") {
-                addCart(cartItem[i].id);
+                // addCart(cartItem[i].id);
+                if(cartItem[i].quantity>=10){
+                    alert("Không mua vược quá sl 10");
+                    return;
+                }
+                cartItem[i].quantity += 1;
+                if(index>=0){
+                    
+                    contentHTMLBtn[index].innerHTML = showAmount(cartItem[i].quantity, id, cartItem[i].quantity);
+                }
             }
-            contentHTMLBtn[index].innerHTML = showAmount(cartItem[i].quantity, id, cartItem[i].quantity);
             saveLocalstorage();
             renderCart(cartItem);
         }
     }
+    
 }
 function buy(e) {
     if (e === 1) {
@@ -153,8 +145,8 @@ function buy(e) {
         renderbuy(cartItem);
         return;
     }
-     o = document.getElementsByClassName("order-now")[0].style.display = "none";
-     document.getElementsByClassName("side-nav")[0].style.display = "block";
+    o = document.getElementsByClassName("order-now")[0].style.display = "none";
+    document.getElementsByClassName("side-nav")[0].style.display = "block";
     sideNav(1);
     renderbuy(cartItem);
 
@@ -179,7 +171,7 @@ function order() {
   </div>`;
 
 }
-function reload(){
+function reload() {
     alert("đơn hàng của bạn đã được duyệt")
     clearCart();
     location.reload();
@@ -240,7 +232,7 @@ function renderCart(data) {
                 <button onclick="removeItem(${data[i].id})"><i class="fas fa-trash"></i></button>
             </div>  
         `
-       
+
     }
     document.getElementById("baske").innerHTML = `<div class="nav">
     <button onclick="sideNav(1)"><i class="fas fa-shopping-cart"
@@ -257,11 +249,10 @@ function renderCart(data) {
     </div>
 `
     document.getElementById("cart-items").innerHTML = contentHTML;
-    
+
 }
-function renderbuy(data){
+function renderbuy(data) {
     var contentHTMLlistBuy = "";
-    total = 0;
     var amount = 0;
     for (var i = 0; i < data.length; i++) {
         amount += data[i].quantity;
@@ -308,7 +299,7 @@ function getAddBtn() {
 
     }
 }
-setTimeout(getAddBtn, 1000);
+// setTimeout(getAddBtn, 1000);
 
 //loccalSttorage
 function saveLocalstorage() {
